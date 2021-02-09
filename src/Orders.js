@@ -55,7 +55,7 @@ class Orders extends React.Component {
                 variant="contained"
                 color="primary"
                 size="small"
-                href="/edit"
+                href="/edit/"
               >
                 Edit
               </Button>

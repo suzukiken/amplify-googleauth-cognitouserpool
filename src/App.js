@@ -9,7 +9,7 @@ export default function App() {
     <BrowserRouter>
       <div>
         <Switch>
-          <Route path="/edit">
+          <Route path="/edit/">
             <Edit />
           </Route>
           <Route path="/">
