@@ -1,10 +1,11 @@
 import React from 'react' // useEffect
-import Amplify, { API, graphqlOperation, Auth } from 'aws-amplify'
+import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { getOrder, searchOrder } from './graphql/queries'
 import awsExports from "./aws-exports"
 import { Button, TextField, Container, Grid, AppBar, Toolbar, Typography } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
-
+import Loading from './Loading'
+import Login from './Login'
 
 Amplify.configure(awsExports)
 
@@ -13,39 +14,16 @@ class App extends React.Component {
     super(props)
     // setState を利用する関数はbind する。
     // これをしないとコードがキモくなる
-    this.get_order = this.get_order.bind(this);
-    this.search_order = this.search_order.bind(this);
-    this.orderIdChanged = this.orderIdChanged.bind(this);
-    this.prefChanged = this.prefChanged.bind(this);
+    this.get_order = this.get_order.bind(this)
+    this.search_order = this.search_order.bind(this)
+    this.orderIdChanged = this.orderIdChanged.bind(this)
+    this.prefChanged = this.prefChanged.bind(this)
     this.state = {
       order_id: 1,
       search_pref: '県',
       rows: [],
-      columns: []
-    }
-  }
-
-  async sign_in() {
-    try {
-      await Auth.federatedSignIn()
-    }
-    catch (err) {
-      console.log('error signIn:', err)
-    }
-    finally {
-      console.log('done signIn')
-    }
-  }
-
-  async sign_out() {
-    try {
-      await Auth.signOut()
-    }
-    catch (err) {
-      console.log('error signOut:', err)
-    }
-    finally {
-      console.log('done signOut')
+      columns: [],
+      loading: false
     }
   }
 
@@ -81,9 +59,15 @@ class App extends React.Component {
 
   async search_order(e) {
     e.preventDefault()
+    this.setState({
+      loading: true
+    })
     try {
       const query_response = await API.graphql(graphqlOperation(searchOrder, { prefecture: this.state.search_pref }))
       console.log(query_response.data)
+      this.setState({
+        loading: false
+      })
       let rows = []
       let columns = []
       let cols = query_response.data.searchOrder.columns
@@ -109,16 +93,15 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+        <AppBar position="static" style={styles.appbar}>
+          <Toolbar>
+            <Typography variant="h6" style={styles.title}>
+              Orders
+            </Typography>
+            <Login />
+          </Toolbar>
+        </AppBar>
         <Container maxWidth="lg">
-          <AppBar position="static" style={styles.appbar}>
-            <Toolbar>
-              <Typography variant="h6">
-                Orders
-              </Typography>
-              <Button color="inherit" onClick={this.sign_in}>Login</Button>
-              <Button color="inherit" onClick={this.sign_out}>Logout</Button>
-            </Toolbar>
-          </AppBar>
           <Grid container spacing={2}>
             <Grid item xs={12} style={styles.grid}>
                 <form noValidate autoComplete="off" onSubmit={this.get_order}>
@@ -133,6 +116,7 @@ class App extends React.Component {
                 </form>
             </Grid>
             <Grid item xs={12} style={styles.grid}>
+              <Loading loading={this.state.loading} />
               <DataGrid rows={this.state.rows} columns={this.state.columns} pageSize={10} autoHeight />
             </Grid>
           </Grid>
@@ -143,11 +127,12 @@ class App extends React.Component {
 }
 
 const styles = {
+  title: { flexGrow: 1 },
   header: { padding: '12px' },
   grid: { padding: '12px' },
   button: { margin: '4px' },
   textfield: { margin: '4px' },
-  appbar: { marginBottom: '20px' }
+  appbar: { marginBottom: '30px' }
 }
 
 export default App;
