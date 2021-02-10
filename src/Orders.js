@@ -1,6 +1,6 @@
 import React from 'react' // useEffect
 import { API, graphqlOperation } from 'aws-amplify'
-import { getOrder, searchOrder } from './graphql/queries'
+import { getOrderDetail, searchOrder } from './graphql/queries'
 import { Button, TextField, Container, Grid } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import Loading from './Loading'
@@ -38,7 +38,7 @@ class Orders extends React.Component {
   async get_order(e) {
     e.preventDefault()
     try {
-      const query_response = await API.graphql(graphqlOperation(getOrder, { id: this.state.order_id }))
+      const query_response = await API.graphql(graphqlOperation(getOrderDetail, { id: this.state.order_id }))
       console.log(query_response.data)
       let rows = []
       rows.push(query_response.data.getOrder)

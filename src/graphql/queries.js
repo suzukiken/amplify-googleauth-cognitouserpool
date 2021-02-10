@@ -6,6 +6,7 @@ export const getOrder = /* GraphQL */ `
     getOrder(id: $id) {
       id
       updated
+      detail
     }
   }
 `;
@@ -17,6 +18,29 @@ export const searchOrder = /* GraphQL */ `
         type
       }
       rows
+    }
+  }
+`;
+export const getOrderDetail = /* GraphQL */ `
+  query GetOrder($id: Int!) {
+    getOrder(id: $id) {
+      id
+      updated
+      detail {
+        customer {
+          mail
+          name
+          prefecture
+        }
+        items {
+          pcs
+          sku
+        }
+        payment {
+          amount
+          type
+        }
+      }
     }
   }
 `;
