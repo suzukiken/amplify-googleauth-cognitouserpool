@@ -69,7 +69,7 @@ class EditIndex extends React.Component {
       <Container maxWidth="lg">
         <Grid container spacing={2}>
           <Grid item xs={12} style={styles.grid}>
-            <Button variant="contained" color="primary" type="submit" style={styles.button}>Edit customer</Button>
+            <Button variant="contained" color="primary" type="submit" style={styles.button} href="/edit/customer/">Edit customer</Button>
             <Button variant="contained" color="primary" type="submit" style={styles.button}>Edit items</Button>
             <Button variant="contained" color="primary" type="submit" style={styles.button}>Edit payments</Button>
           </Grid>
