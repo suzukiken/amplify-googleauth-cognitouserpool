@@ -6,7 +6,6 @@ export const getOrder = /* GraphQL */ `
     getOrder(id: $id) {
       id
       updated
-      detail
     }
   }
 `;
