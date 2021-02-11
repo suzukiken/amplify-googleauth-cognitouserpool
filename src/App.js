@@ -1,6 +1,7 @@
 import React from 'react'
 import Navi from './Navi'
-import Editer from './Editer'
+import EditCustomer from './EditCustomer'
+import EditIndex from './EditIndex'
 import Orders from './Orders'
 import { BrowserRouter, Switch, Route } from "react-router-dom"
 
@@ -9,11 +10,14 @@ export default function App() {
     <BrowserRouter>
       <div>
         <Switch>
+          <Route path="/edit/customer">
+            <EditCustomerPage />
+          </Route>
           <Route path="/edit/">
-            <Edit />
+            <EditIndexPage />
           </Route>
           <Route path="/">
-            <Home />
+            <HomePage />
           </Route>
         </Switch>
       </div>
@@ -21,18 +25,29 @@ export default function App() {
   )
 }
 
-class Edit extends React.Component {
+class EditCustomerPage extends React.Component {
   render() {
     return (
       <div className="App">
         <Navi />
-        <Editer />
+        <EditCustomer />
       </div>
     )
   }
 }
 
-class Home extends React.Component {
+class EditIndexPage extends React.Component {
+  render() {
+    return (
+      <div className="App">
+        <Navi />
+        <EditIndex />
+      </div>
+    )
+  }
+}
+
+class HomePage extends React.Component {
   render() {
     return (
       <div className="App">

@@ -4,7 +4,7 @@ import { DataGrid } from '@material-ui/data-grid'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getOrderDetail } from './graphql/queries'
 
-class Editer extends React.Component {
+class EditIndex extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -96,4 +96,4 @@ const styles = {
   textfield: { margin: '4px' },
 }
 
-export default Editer
+export default EditIndex
