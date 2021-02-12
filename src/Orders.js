@@ -1,83 +1,66 @@
-import React from 'react' // useEffect
+import React, { useState } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getOrderDetail, searchOrder } from './graphql/queries'
 import { Button, TextField, Container, Grid } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import Loading from './Loading'
 
-class Orders extends React.Component {
-  constructor(props) {
-    super(props)
-    // setState を利用する関数はbind する。
-    // これをしないとコードがキモくなる
-    this.get_order = this.get_order.bind(this)
-    this.search_order = this.search_order.bind(this)
-    this.orderIdChanged = this.orderIdChanged.bind(this)
-    this.prefChanged = this.prefChanged.bind(this)
-    this.state = {
-      order_id: 1,
-      search_pref: '県',
-      rows: [],
-      columns: [],
-      loading: false
-    }
+function Orders(props) {
+  const [order_id, setOrderId] = useState(1)
+  const [search_pref, setSearchPref] = useState('県')
+  const [rows, setRows] = useState([])
+  const [columns, setColumns] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  function orderIdChanged(e) {
+    setOrderId(e.target.value)
   }
 
-  orderIdChanged(e) {
-    this.setState({
-      order_id: e.target.value
-    })
+  function prefChanged(e) {
+    setSearchPref(e.target.value)
   }
 
-  prefChanged(e) {
-    this.setState({
-      search_pref: e.target.value
-    })
-  }
-
-  async get_order(e) {
+  async function get_order(e) {
     e.preventDefault()
     try {
-      const query_response = await API.graphql(graphqlOperation(getOrderDetail, { id: this.state.order_id }))
+      const query_response = await API.graphql(graphqlOperation(getOrderDetail, { id: order_id }))
       console.log(query_response.data)
-      let rows = []
-      rows.push(query_response.data.getOrder)
-      this.setState({
-        rows: rows,
-        columns: [
-          { field: 'id', headerName: 'ID' },
-          { field: 'updated', headerName: 'Updated', width: 150 },
-          {
-            field: 'edit',
-            headerName: 'Edit',
-            renderCell: (params) => (
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                href="/edit/"
-              >
-                Edit
-              </Button>
-            )
-          }
-        ]
-      })
+      setRows([
+        {
+          id: query_response.data.getOrder.id,
+          updated: query_response.data.getOrder.updated
+        }  
+      ])
+      let columns = [
+        { field: 'id', headerName: 'ID' },
+        { field: 'updated', headerName: 'Updated', width: 150 },
+        {
+          field: 'edit',
+          headerName: 'Edit',
+          renderCell: (params) => (
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              href={`/order/${order_id}/`}
+            >
+              Edit
+            </Button>
+          )
+        }
+      ]
+      setColumns(columns)
     }
     catch (err) { console.log('error get order') }
   }
 
-  async search_order(e) {
+  async function search_order(e) {
     e.preventDefault()
-    this.setState({
-      loading: true
-    })
+    setLoading(true)
     try {
-      const query_response = await API.graphql(graphqlOperation(searchOrder, { prefecture: this.state.search_pref }))
+      const query_response = await API.graphql(graphqlOperation(searchOrder, { prefecture: search_pref }))
       console.log(query_response.data)
-      this.setState({
-        loading: false
-      })
+      setLoading(false)
       let rows = []
       let columns = []
       let cols = query_response.data.searchOrder.columns
@@ -92,38 +75,34 @@ class Orders extends React.Component {
         }
         rows.push(rdata)
       }
-      this.setState({
-        rows: rows,
-        columns: columns
-      })
+      setRows(rows)
+      setColumns(columns)
     }
     catch (err) { console.log('error search order') }
   }
 
-  render() {
-    return (
-      <Container maxWidth="lg">
-        <Grid container spacing={2}>
-          <Grid item xs={12} style={styles.grid}>
-              <form noValidate autoComplete="off" onSubmit={this.get_order}>
-                <TextField size="small" label="Number" variant="outlined" type="number" onChange={this.orderIdChanged} value={this.state.order_id} style={styles.textfield} />
-                <Button variant="contained" color="primary" type="submit" style={styles.button}>Get Order</Button>
-              </form>
-          </Grid>
-          <Grid item xs={12} style={styles.grid}>
-              <form noValidate autoComplete="off" onSubmit={this.search_order}>
-                <TextField size="small" label="Search string" variant="outlined" onChange={this.prefChanged} value={this.state.search_pref} style={styles.textfield} />
-                <Button variant="contained" color="primary" type="submit" style={styles.button}>Search Order</Button>
-              </form>
-          </Grid>
-          <Grid item xs={12} style={styles.grid}>
-            <Loading loading={this.state.loading} />
-            <DataGrid rows={this.state.rows} columns={this.state.columns} pageSize={10} autoHeight />
-          </Grid>
+  return (
+    <Container maxWidth="lg">
+      <Grid container spacing={2}>
+        <Grid item xs={12} style={styles.grid}>
+            <form noValidate autoComplete="off" onSubmit={get_order}>
+              <TextField size="small" label="Number" variant="outlined" type="number" onChange={orderIdChanged} value={order_id} style={styles.textfield} />
+              <Button variant="contained" color="primary" type="submit" style={styles.button}>Get Order</Button>
+            </form>
         </Grid>
-      </Container>
-    )
-  }
+        <Grid item xs={12} style={styles.grid}>
+            <form noValidate autoComplete="off" onSubmit={search_order}>
+              <TextField size="small" label="Search string" variant="outlined" onChange={prefChanged} value={search_pref} style={styles.textfield} />
+              <Button variant="contained" color="primary" type="submit" style={styles.button}>Search Order</Button>
+            </form>
+        </Grid>
+        <Grid item xs={12} style={styles.grid}>
+          <Loading loading={loading} />
+          <DataGrid rows={rows} columns={columns} pageSize={10} autoHeight />
+        </Grid>
+      </Grid>
+    </Container>
+  )
 }
 
 const styles = {

@@ -1,25 +1,19 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { LinearProgress } from '@material-ui/core'
 
-
-class Loading extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
-
-  render() {
-    let ret;
-    if (this.props.loading) {
-      ret = <LinearProgress />
+function Loading(props) {
+  
+  const [ret, setRet] = useState('')
+  
+  useEffect(() => {
+    if (props.loading) {
+      setRet(<LinearProgress />)
+    } else {
+      setRet('')
     }
-    else {
-      ret = ''
-    }
-    return (
-      ret
-    )
-  }
+  }, [props.loading])
+
+  return (ret)
 }
 
 export default Loading

@@ -1,30 +1,25 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Auth } from 'aws-amplify'
 import { Button } from '@material-ui/core'
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      username: null
-    }
-  }
+function Login() {
+  const [username, setUsername] = useState(null)
 
-  componentDidMount() {
+  useEffect(() => {
     Auth.currentAuthenticatedUser()
       .then(function(user) {
         // ページを開いた時点でログインしている
         // 或いはログインした
-        this.setState({ username: user.username })
-      }.bind(this))
+        setUsername(user.username)
+      })
       .catch(function() {
         // ページを開いた時点でログアウトしている
         // 或いはログアウトした
-        this.setState({ username: null })
-      }.bind(this))
-  }
+        setUsername(null)
+      })
+  })
 
-  async sign_in() {
+  async function sign_in() {
     try {
       await Auth.federatedSignIn()
     }
@@ -36,7 +31,7 @@ class Login extends React.Component {
     }
   }
 
-  async sign_out() {
+  async function sign_out() {
     try {
       await Auth.signOut()
     }
@@ -48,22 +43,20 @@ class Login extends React.Component {
     }
   }
 
-  render() {
-    if (this.state.username) {
-      return (
-        <div>
-          {this.state.username}
-          <Button color="inherit" onClick={ this.sign_out }>Logout</Button>
-        </div>
-      )
-    }
-    else {
-      return (
-        <div>
-          <Button color="inherit" onClick={ this.sign_in }>Login</Button>
-        </div>
-      )
-    }
+  if (username) {
+    return (
+      <div>
+        {username}
+        <Button color="inherit" onClick={sign_out}>Logout</Button>
+      </div>
+    )
+  }
+  else {
+    return (
+      <div>
+        <Button color="inherit" onClick={sign_in}>Login</Button>
+      </div>
+    )
   }
 }
 

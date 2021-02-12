@@ -1,20 +1,20 @@
 import React from 'react'
 import Navi from './Navi'
 import EditCustomer from './EditCustomer'
-import EditIndex from './EditIndex'
+import Order from './Order'
 import Orders from './Orders'
 import { BrowserRouter, Switch, Route } from "react-router-dom"
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
       <div>
         <Switch>
-          <Route path="/edit/customer">
+          <Route path="/order/:id/edit/">
             <EditCustomerPage />
           </Route>
-          <Route path="/edit/">
-            <EditIndexPage />
+          <Route path="/order/:id">
+            <OrderPage />
           </Route>
           <Route path="/">
             <HomePage />
@@ -25,35 +25,31 @@ export default function App() {
   )
 }
 
-class EditCustomerPage extends React.Component {
-  render() {
-    return (
-      <div className="App">
-        <Navi />
-        <EditCustomer />
-      </div>
-    )
-  }
+function EditCustomerPage() {
+  return (
+    <div className="App">
+      <Navi />
+      <EditCustomer />
+    </div>
+  )
 }
 
-class EditIndexPage extends React.Component {
-  render() {
-    return (
-      <div className="App">
-        <Navi />
-        <EditIndex />
-      </div>
-    )
-  }
+function OrderPage() {
+  return (
+    <div className="App">
+      <Navi />
+      <Order />
+    </div>
+  )
 }
 
-class HomePage extends React.Component {
-  render() {
-    return (
-      <div className="App">
-        <Navi />
-        <Orders />
-      </div>
-    )
-  }
+function HomePage() {
+  return (
+    <div className="App">
+      <Navi />
+      <Orders />
+    </div>
+  )
 }
+
+export default App
