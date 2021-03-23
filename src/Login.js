@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Auth } from 'aws-amplify'
-import { Button } from '@material-ui/core'
 
 function Login() {
   const [username, setUsername] = useState(null)
@@ -10,11 +9,13 @@ function Login() {
       .then(function(user) {
         // ページを開いた時点でログインしている
         // 或いはログインした
-        setUsername(user.username)
+        console.log('loggingIn')
+        setUsername(user.name)
       })
       .catch(function() {
         // ページを開いた時点でログアウトしている
         // 或いはログアウトした
+        console.log('not loggingIn')
         setUsername(null)
       })
   })
@@ -47,14 +48,14 @@ function Login() {
     return (
       <div>
         {username}
-        <Button color="inherit" onClick={sign_out}>Logout</Button>
+        <button onClick={sign_out}>Logout</button>
       </div>
     )
   }
   else {
     return (
       <div>
-        <Button color="inherit" onClick={sign_in}>Login</Button>
+        <button onClick={sign_in}>Login</button>
       </div>
     )
   }
